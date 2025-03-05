@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.egg-info/
+*.eggs/
+*.manifest
+*.spec
+.venv/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+*.zip
+*.csv
+instances/
+
+result*
+analysis*
