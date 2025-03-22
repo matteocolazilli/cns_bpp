@@ -1,13 +1,13 @@
 from typing import List
 
 
-def best_fit(items: List[int], weights: List[int], c: int) -> List[List[int]]:
+def best_fit(n: int, c: int, weights: List[int]) -> List[List[int]]:
     """
     Algoritmo Best Fit per il Bin Packing:
     Per ogni oggetto, cerca il bin con il minimo spazio in cui può essere inserito.
     Se non c'è spazio in nessun bin, crea un nuovo bin.
     Args: 
-        items (List[int]): Lista di indici degli oggetti da assegnare.
+        n (int): Numero di oggetti.
         weights (List[int]): Lista dei pesi degli oggetti.
         c (int): Capacità massima di ciascun bin.
     Returns:
@@ -16,7 +16,7 @@ def best_fit(items: List[int], weights: List[int], c: int) -> List[List[int]]:
     bins: List[List[int]] = []
     bin_space: List[int] = []  # Tiene traccia dello spazio rimanente in ogni bin
 
-    for i in items:
+    for i in range(n):
         min_idx = -1
         min_space = c + 1 
 
