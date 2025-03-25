@@ -52,10 +52,8 @@ def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int
         # Confronta la lunghezza di solution.bins con il valore estratto
         if len(solution.bins) < opt_value:
             raise Exception("Soluzione sotto l'ottimo!")
-        opt = len(solution.bins) == opt_value
     else:
         # Gestisci il caso in cui 'instance_name' non è presente nel DataFrame
-        opt = False
         print(f"Attenzione: '{instance_name}' non trovato nel DataFrame.")
 
     return {
@@ -64,7 +62,6 @@ def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int
         "c": capacity,
         "num_bins": len(solution.bins),
         "execution_time": exec_time,
-        "opt": opt,
         "opt_diff": len(solution.bins) - opt_value,
     }
 
@@ -87,7 +84,7 @@ def run_experiments(algo: str, input_path: str, overall_time_limit: float, outpu
         # Se il file di output non esiste, crea un nuovo file e scrivi l'header
         if not os.path.isfile(output_file):
             with open(output_file, "w", newline='', encoding="utf-8") as csvfile:
-                fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt", "opt_diff"]
+                fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt_diff"]
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
         
@@ -122,7 +119,7 @@ def run_experiments(algo: str, input_path: str, overall_time_limit: float, outpu
                 # Scrivi i risultati nel file di output
                 with open(output_file, "a", newline='', encoding="utf-8") as csvfile:
                     print("Writing results to file...")
-                    fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt", "opt_diff"]
+                    fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt_diff"]
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                     writer.writerow(result)
     else:

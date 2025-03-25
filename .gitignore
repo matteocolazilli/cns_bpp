@@ -21,7 +21,6 @@ build/
 *.zip
 *.csv
 instances/
-tested_instances/
 
 result*
 analysis*
