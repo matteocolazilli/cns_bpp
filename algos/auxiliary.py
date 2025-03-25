@@ -3,6 +3,8 @@ import sys
 import time
 from typing import List, Tuple
 import os
+import random
+
 def log_function_call(func):
     def wrapper(*args, **kwargs):
         
@@ -54,6 +56,20 @@ def read_instance(file_path: str) -> Tuple[int, int, List[int]]:
         weights.append(weight)
     return n, c, weights
 
+def random_instance(n: int, c: int, seed: int = None) -> List[int]:
+    """
+    Genera un'istanza casuale del Bin Packing Problem.
+    Args:
+      n (int): Numero di oggetti.
+      c (int): Capacità dei bin.
+      seed (int, optional): Seme per la riproducibilità.
+    Returns:
+      (n, c, weights)
+    """
+    if seed is not None:
+        random.seed(seed)
+    weights = [random.randint(1, c) for _ in range(n)]
+    return weights
 
 
 def sorted_dir_list(directory):
