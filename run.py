@@ -158,7 +158,7 @@ def main() -> None:
                         help="Seed for random number generator.")
     parser.add_argument("-a", "--algo", type=str, default="CNS_BP",
                         help="Algorithm to run (cns or bf (BestFit)).",required=True,choices=[CNS,BF])
-    parser.add_argument("-t", "--opt-known", type=bool, default=False,
+    parser.add_argument("-k", "--opt-known", type=bool, default=False,
                         help="Indicates whether the optimal solution is known.")
     args = parser.parse_args()
 
