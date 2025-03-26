@@ -5,7 +5,7 @@ import os
 import csv
 import argparse
 from typing import Dict, Any
-from algos.auxiliary import read_instance, sorted_dir_list
+from utility.auxiliary import read_instance, sorted_dir_list
 from tqdm import tqdm
 from algos.cns import CNS_BP
 from algos.best_fit import best_fit

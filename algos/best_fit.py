@@ -1,6 +1,5 @@
 from typing import List
 from .solution import Solution
-import random
 
 def best_fit(n: int, c: int, weights: List[int]) -> Solution:
     """
