@@ -14,7 +14,7 @@ import pandas as pd
 CNS = "cns"
 BF = "bf"
 
-def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int) -> Dict[str, Any]:
+def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int, opt_known: bool) -> Dict[str, Any]:
     """
     Esegue l'algoritmo scelto su un'istanza specifica e restituisce i risultati.
     Args:
@@ -39,35 +39,50 @@ def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int
     
     assert solution.validate_assignment(), f"Invalid weights assignment for instance {instance_name}!"
 
-    sheet_name = os.path.dirname(file_path).split("/")[1]
-    df = pd.read_excel('./solutions/Solutions.xlsx', sheet_name=sheet_name)
-    
-    
-    filter = df[df['Name'] == instance_name]['Best LB']
+    if opt_known:
 
-    # Verifica se il filtro ha restituito almeno una riga
-    if not filter.empty:
-        # Estrai il primo valore della Series
-        opt_value = filter.iloc[0]
-        # Confronta la lunghezza di solution.bins con il valore estratto
-        if len(solution.bins) < opt_value:
-            raise Exception("Soluzione sotto l'ottimo!")
-    else:
-        # Gestisci il caso in cui 'instance_name' non è presente nel DataFrame
-        print(f"Attenzione: '{instance_name}' non trovato nel DataFrame.")
+        sheet_name = os.path.dirname(file_path).split("/")[1]
+        try:
+            df = pd.read_excel('./solutions/Solutions.xlsx', sheet_name=sheet_name)
+        except FileNotFoundError:
+            raise FileNotFoundError("The file './solutions/Solutions.xlsx' was not found. Please check the path.")
+        except ValueError:
+            raise ValueError(f"The sheet '{sheet_name}' does not exist in the Excel file. Please verify the sheet name.")
+        
+        try:
+            filter = df[df['Name'] == instance_name]['Best LB']
+        except KeyError:
+            raise KeyError("The column 'Name' or 'Best LB' is missing in the Excel file. Please check the file structure.")
+
+        # Verifica se il filtro ha restituito almeno una riga
+        if not filter.empty:
+            # Estrai il primo valore della Series
+            opt_value = filter.iloc[0]
+            # Confronta la lunghezza di solution.bins con il valore estratto
+            if len(solution.bins) < opt_value:
+                raise Exception("Soluzione sotto l'ottimo!")
+        else:
+            # Gestisci il caso in cui 'instance_name' non è presente nel DataFrame
+            print(f"Attenzione: '{instance_name}' non trovato nel DataFrame.")
+
+        return {
+            "instance": instance_name,
+            "n": n,
+            "c": capacity,
+            "num_bins": len(solution.bins),
+            "execution_time": exec_time,
+            "opt_diff": len(solution.bins) - opt_value,
+        }
 
     return {
         "instance": instance_name,
         "n": n,
         "c": capacity,
         "num_bins": len(solution.bins),
-        "execution_time": exec_time,
-        "opt_diff": len(solution.bins) - opt_value,
+        "execution_time": exec_time
     }
 
-
-
-def run_experiments(algo: str, input_path: str, overall_time_limit: float, output_file: str, seed: int) -> None:
+def run_experiments(algo: str, input_path: str, overall_time_limit: float, output_file: str, seed: int, opt_known: bool) -> None:
     """
     Esegue l'algoritmo scelto su un insieme di istanze e salva i risultati in un file CSV.
     Args:
@@ -108,7 +123,7 @@ def run_experiments(algo: str, input_path: str, overall_time_limit: float, outpu
             print(f"Processing instance {filename}")
             if os.path.isfile(file_path):
                 try:
-                    result = run_instance(algo, file_path, overall_time_limit, seed)
+                    result = run_instance(algo, file_path, overall_time_limit, seed, opt_known)
                 except Exception as e:
                     print(f"Error processing instance {filename}: {e}")
                     print(f"Do you want to proceed to the next instance? (y/n)")
@@ -143,13 +158,15 @@ def main() -> None:
                         help="Seed for random number generator.")
     parser.add_argument("-a", "--algo", type=str, default="CNS_BP",
                         help="Algorithm to run (cns or bf (BestFit)).",required=True,choices=[CNS,BF])
+    parser.add_argument("-t", "--opt-known", type=bool, default=False,
+                        help="Indicates whether the optimal solution is known.")
     args = parser.parse_args()
 
 
     if args.folder:
-        run_experiments(args.algo, args.folder, args.time_limit, args.output, args.seed)
+        run_experiments(args.algo, args.folder, args.time_limit, args.output, args.seed,args.opt_known)
     elif args.instance:
-        result = run_instance(args.algo,args.instance, args.time_limit, args.seed)
+        result = run_instance(args.algo,args.instance, args.time_limit, args.seed,args.opt_known)
         print(f"Instance: {args.instance}")
         print(f"Number of items (n): {result['n']}")
         print(f"Bin capacity (c): {result['c']}")
