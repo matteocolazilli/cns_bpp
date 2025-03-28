@@ -134,7 +134,7 @@ def run_experiments(algo: str, input_path: str, overall_time_limit: float, outpu
                 # Scrivi i risultati nel file di output
                 with open(output_file, "a", newline='', encoding="utf-8") as csvfile:
                     print("Writing results to file...")
-                    fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt_diff"]
+                    fieldnames = ["instance", "n", "c", "num_bins", "execution_time", "opt_diff"] if opt_known else ["instance", "n", "c", "num_bins", "execution_time"]
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                     writer.writerow(result)
     else:
