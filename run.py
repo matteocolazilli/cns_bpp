@@ -9,10 +9,12 @@ from utility.auxiliary import read_instance, sorted_dir_list
 from tqdm import tqdm
 from algos.cns import CNS_BP
 from algos.best_fit import best_fit
+from algos.linear_solver import linear_solver
 import pandas as pd
 
 CNS = "cns"
 BF = "bf"
+LS = "ls"
 
 def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int, opt_known: bool) -> Dict[str, Any]:
     """
@@ -33,6 +35,8 @@ def run_instance(algo: str, file_path: str, overall_time_limit: float, seed: int
         solution = CNS_BP(n, capacity, weights, overall_time_limit, seed)
     elif algo == BF:
         solution = best_fit(n, capacity, weights)
+    elif algo == LS:
+        solution = linear_solver(n, capacity, weights)
     else:
         raise ValueError(f"Unknown algorithm: {algo}")
     exec_time = perf_counter() - start_time
@@ -157,7 +161,7 @@ def main() -> None:
     parser.add_argument("-s", "--seed", type=int, default=1,
                         help="Seed for random number generator.")
     parser.add_argument("-a", "--algo", type=str, default="CNS_BP",
-                        help="Algorithm to run (cns or bf (BestFit)).",required=True,choices=[CNS,BF])
+                        help="Algorithm to run (cns or bf (BestFit)).",required=True,choices=[CNS,BF,LS])
     parser.add_argument("-k", "--opt-known", type=bool, default=False,
                         help="Indicates whether the optimal solution is known.")
     args = parser.parse_args()
